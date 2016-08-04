@@ -12,8 +12,8 @@ let Keen = require("keen.io");
  */
 
 let client = Keen.configure({
-    projectId: "<project_id>",
-    writeKey: "<write_key>",
+    projectId: "< your_project_id >",
+    writeKey: "< your_write_key >",
 });
 
 exports.handler = (event, context, callback) => {
@@ -22,10 +22,15 @@ exports.handler = (event, context, callback) => {
         if (e) {
             callback(e);
         } else {
+            // aws logs are in compressed format so decoding the gzip string.
             result = JSON.parse(result.toString('utf8'));
-            console.log('Decoded payload:', JSON.stringify(result));
-            // send single event to Keen IO 
-            client.addEvent("event", parse(result), function(err, res) {
+
+            // Aws logs are in string format we want to extract useful information
+            // out of that string. We will use npm module "cloudwatch-logs-parser"
+            let apiLog = parse(result);
+            
+            // sending this log to Keen IO 
+            client.addEvent("event", apiLog, function(err, res) {
                 if (err) {
                     callback(err);
                 } else {
