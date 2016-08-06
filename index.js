@@ -30,7 +30,7 @@ exports.handler = (event, context, callback) => {
             let apiLog = parse(result);
             
             // sending this log to Keen IO 
-            client.addEvent("event", apiLog, function(err, res) => {
+            client.addEvent("event", apiLog, (err, res) => {
                 if (err) {
                     callback(err);
                 } else {
